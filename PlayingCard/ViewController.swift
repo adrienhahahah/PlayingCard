@@ -34,6 +34,10 @@ class ViewController: UIViewController {
     
     lazy var cardBehavior = CardBehavior(in: animator)
     
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         var cards = [PlayingCard]()
@@ -136,7 +140,32 @@ class ViewController: UIViewController {
         }
     }
     
-    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        switch preferredInterfaceOrientationForPresentation {
+        case .landscapeLeft, .landscapeRight:
+            print("landscape")
+        case .portrait:
+            changeLayoutFromLandScapeToPortrait()
+            print("protrait normal")
+        case .portraitUpsideDown:
+            print("upsidedown")
+        default: break
+        }
+        view.setNeedsDisplay()
+        view.setNeedsLayout()
+    }
+
+    func changeLayoutFromLandScapeToPortrait() {
+        for cardView in cardViews {
+            if(!cardView.isHidden) {
+                if(cardView.frame.origin.x > view.bounds.maxX) {
+                    let formerOriginY = cardView.frame.origin.y
+                    cardView.frame.origin.y = cardView.frame.origin.x
+                    cardView.frame.origin.x = formerOriginY
+                }
+            }
+        }
+    }
     
     
     //    @IBOutlet weak var playingCardView: PlayingCardView!{
